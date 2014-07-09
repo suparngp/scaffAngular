@@ -15,6 +15,7 @@ public class CreateFile extends JDialog {
     private JTextField moduleName;
     private JLabel warningLabel;
     private JLabel warningtext;
+    private JTextField objectName;
     private Controller controller;
 
     public CreateFile(Controller angularController) {
@@ -51,34 +52,49 @@ public class CreateFile extends JDialog {
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-        mainFileName.addKeyListener(new KeyAdapter() {
+        fileType.addActionListener(new ActionListener () {
+            public void actionPerformed(ActionEvent e) {
+                refresh();
+            }
+        });
+
+        objectName.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
+                refresh();
                 super.keyReleased(e);
-                testFileName.setText(mainFileName.getText());
-                boolean exists = controller.checkIfFileExists(mainFileName.getText(), (String)fileType.getSelectedItem());
-                if(exists){
-                    buttonOK.setEnabled(false);
-                    warningLabel.setVisible(true);
-                    warningtext.setVisible(true);
-                }
-                else{
-                    buttonOK.setEnabled(true);
-                    warningLabel.setVisible(false);
-                    warningtext.setVisible(false);
-                }
             }
         });
     }
 
+    private void refresh() {
+        mainFileName.setText(controller.getSrcFilename(getBaseName(), getObjectType()));
+        testFileName.setText(controller.getTestFilename(getBaseName(), getObjectType()));
+
+        boolean exists = controller.checkIfFileExists(mainFileName.getText()) && controller.checkIfFileExists(testFileName.getText());
+
+        if (exists) {
+            buttonOK.setEnabled(false);
+            warningLabel.setVisible(true);
+            warningtext.setVisible(true);
+        } else {
+            buttonOK.setEnabled(true);
+            warningLabel.setVisible(false);
+            warningtext.setVisible(false);
+        }
+    }
+
+    private String getBaseName() {
+        return objectName.getText().trim();
+    }
+    private String getObjectType() {return (String)fileType.getSelectedItem();}
+
     private void onOK() {
-// add your code here
-        this.controller.createHandler(this.mainFileName.getText().trim(), (String) fileType.getSelectedItem());
+        this.controller.createHandler(getBaseName(), (String) fileType.getSelectedItem());
         dispose();
     }
 
     private void onCancel() {
-// add your code here if necessary
         dispose();
     }
 
@@ -86,9 +102,8 @@ public class CreateFile extends JDialog {
         warningLabel.setVisible(false);
         warningtext.setVisible(false);
         this.setLocationRelativeTo(null);
-        this.mainFileName.grabFocus();
+        this.objectName.grabFocus();
         this.pack();
         this.setVisible(true);
     }
-
 }
