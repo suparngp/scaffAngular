@@ -40,8 +40,8 @@ public class Controller extends AnAction {
         try {
             String mainFileName = getSrcFilename(fileName, fileType);
             String testFileName = getTestFilename(fileName, fileType);
-            fileHandler.createFile(mainFileName, currentPath);
-            fileHandler.createFile(testFileName, currentPath);
+            File mainFile = fileHandler.createFile(mainFileName, currentPath);
+            File testFile = fileHandler.createFile(testFileName, currentPath);
             File currentDirectory = new File(currentPath);
 
             VirtualFile fileByIoFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(currentDirectory);
@@ -51,10 +51,10 @@ public class Controller extends AnAction {
                 fileByIoFile.refresh(false, true);
 
                 processFile(mainFileName);
-//                writeFileContent(toBeOpened, getSrcContentByType());
+                fileHandler.writeFileContent(mainFile, getSrcContentByType(fileType));
 
                 processFile(testFileName);
-//                writeFileContent(toBeOpened, getSrcContentByType());
+                fileHandler.writeFileContent(testFile, getTestContentByType(fileType));
             } else {
                 System.out.println("File not refreshed");
             }
@@ -120,18 +120,6 @@ public class Controller extends AnAction {
         }
 
         return "";
-    }
-
-    private void writeFileContent(File file, String content) {
-        FileWriter fw = null;
-        try {
-            fw = new FileWriter(file.getAbsoluteFile());
-            BufferedWriter bw = new BufferedWriter(fw);
-            bw.write(content);
-            bw.close();
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        }
     }
 
     public String getSrcFilename(String baseName, String fileType ) {

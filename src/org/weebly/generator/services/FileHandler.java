@@ -4,7 +4,9 @@ import org.weebly.generator.exceptions.DirectoryNotFoundException;
 import org.weebly.generator.exceptions.DuplicateFileException;
 import org.weebly.generator.exceptions.FileNotFoundException;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 
 /**
@@ -24,7 +26,7 @@ public class FileHandler {
      * @throws org.weebly.generator.exceptions.DirectoryNotFoundException if the directory is not found
      * @throws org.weebly.generator.exceptions.DuplicateFileException     if the file already exists in the path
      */
-    public boolean createFile(String fileName, String path)
+    public File createFile(String fileName, String path)
             throws IOException,
             DirectoryNotFoundException,
             DuplicateFileException {
@@ -42,7 +44,7 @@ public class FileHandler {
         boolean result = fileToBeCreated.createNewFile();
         boolean writable = fileToBeCreated.setWritable(true);
 
-        return result && writable;
+        return fileToBeCreated;
     }
 
     /**
@@ -82,4 +84,22 @@ public class FileHandler {
         File file = new File(filePath);
         return file.exists();
     }
+
+    /**
+     * writes text to file
+     * @param file file object to write to
+     * @param content text to write to file
+     */
+    public void writeFileContent(File file, String content) {
+        FileWriter fw = null;
+        try {
+            fw = new FileWriter(file.getAbsoluteFile());
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write(content);
+            bw.close();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+    }
+
 }
