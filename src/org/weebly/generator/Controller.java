@@ -12,10 +12,10 @@ import org.weebly.generator.forms.CreateFile;
 import org.weebly.generator.forms.ErrorDialog;
 import org.weebly.generator.services.FileHandler;
 
-import java.awt.event.ActionEvent;
+import java.io.BufferedWriter;
 import java.io.File;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.io.FileWriter;
+import java.io.IOException;
 
 /**
  * Controller Generator for angular.
@@ -33,16 +33,15 @@ public class Controller extends AnAction {
         System.out.println(currentPath);
         new CreateFile(this).showDialog();
         this.e = e;
-
     }
 
     public void createHandler(String fileName, String fileType) {
         System.out.println(fileName + " creating at " + currentPath);
         try {
-            String mainFileName = getFileNameWithType(trimJSExtension(fileName), fileType);
-            String testFileName = mainFileName + "Spec";
-            fileHandler.createFile(mainFileName + ".js", currentPath);
-            fileHandler.createFile(testFileName + ".js", currentPath);
+            String mainFileName = getSrcFilename(fileName, fileType);
+            String testFileName = getTestFilename(fileName, fileType);
+            fileHandler.createFile(mainFileName, currentPath);
+            fileHandler.createFile(testFileName, currentPath);
             File currentDirectory = new File(currentPath);
 
             VirtualFile fileByIoFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(currentDirectory);
@@ -51,18 +50,11 @@ public class Controller extends AnAction {
                 fileByIoFile.getChildren();
                 fileByIoFile.refresh(false, true);
 
-                File toBeOpened = new File(currentPath + "/" + testFileName + ".js");
-                VirtualFile vfToBeOpened = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(toBeOpened);
-                if (vfToBeOpened != null) {
-                    FileEditorManager.getInstance(project).openFile(vfToBeOpened, true);
-                }
+                processFile(mainFileName);
+//                writeFileContent(toBeOpened, getSrcContentByType());
 
-                toBeOpened = new File(currentPath + "/" + mainFileName + ".js");
-                vfToBeOpened = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(toBeOpened);
-                if (vfToBeOpened != null) {
-                    FileEditorManager.getInstance(project).openFile(vfToBeOpened, true);
-                }
-
+                processFile(testFileName);
+//                writeFileContent(toBeOpened, getSrcContentByType());
             } else {
                 System.out.println("File not refreshed");
             }
@@ -75,48 +67,80 @@ public class Controller extends AnAction {
         }
     }
 
+    private void processFile(String filename) {
+        File toBeOpened;
+        VirtualFile vfToBeOpened;
+        toBeOpened = new File(currentPath + "/" + filename);
+        vfToBeOpened = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(toBeOpened);
+        if (vfToBeOpened != null) {
+            FileEditorManager.getInstance(project).openFile(vfToBeOpened, true);
+        }
+    }
+
     /**
      * Gets the file name with the required type based on if its a controller or a directive or a service
      *
      * @param fileName the filename
-     * @param fileType the type of the file
+     * @param type the type of the file
      * @return the file name with file type
      */
-    private String getFileNameWithType(String fileName, String fileType) {
-
-        if (fileType.equals("Controller")) {
+    private String getFilenameWithSuffix(String fileName, String type) {
+        if (type.equals("Controller")) {
             fileName += "Ctrl";
 
-        } else if (fileType.equals("Directive")) {
+        } else if (type.equals("Directive")) {
             fileName += "Directive";
 
-        } else if (fileType.equals("Service")) {
+        } else if (type.equals("Service")) {
             fileName += "Service";
-
         }
 
         return fileName;
     }
 
-    /**
-     * Trims the .js from the end of the file name if exists and returns the rest of the string.
-     *
-     * @param fileName the filename
-     * @return the file name without .js
-     */
-    private String trimJSExtension(String fileName) {
-        //check if the file name ends with js
-        Pattern pattern = Pattern.compile(".+\\.js$");
-        Matcher matcher = pattern.matcher(fileName);
-        String trimmedFileName;
-        if (matcher.matches()) {
-            trimmedFileName = fileName.trim().substring(0, fileName.length() - 3);
-        } else {
-            trimmedFileName = fileName.trim();
+    private String getSrcContentByType(String type) {
+        if (type.equals("Controller")) {
+            return "";
+        } else if (type.equals("Directive")) {
+            return "";
+        } else if (type.equals("Service")) {
+            return "";
         }
-        return trimmedFileName;
+
+        return "";
     }
 
+    private String getTestContentByType(String type) {
+        if (type.equals("Controller")) {
+            return "";
+        } else if (type.equals("Directive")) {
+            return "";
+        } else if (type.equals("Service")) {
+            return "";
+        }
+
+        return "";
+    }
+
+    private void writeFileContent(File file, String content) {
+        FileWriter fw = null;
+        try {
+            fw = new FileWriter(file.getAbsoluteFile());
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write(content);
+            bw.close();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+    }
+
+    public String getSrcFilename(String baseName, String fileType ) {
+        return getFilenameWithSuffix(baseName, fileType) + ".js";
+    }
+
+    public String getTestFilename(String baseName, String fileType ) {
+        return getFilenameWithSuffix(baseName, fileType) + "Spec.js";
+    }
 
     /**
      * Displays the error dialog
@@ -132,12 +156,9 @@ public class Controller extends AnAction {
      * Checks if the main JS file and test file exists
      *
      * @param fileName the filename
-     * @param fileType the type of the file
      * @return true if the files don't exist, otherwise false
      */
-    public boolean checkIfFileExists(String fileName, String fileType) {
-        String mainFileName = getFileNameWithType(trimJSExtension(fileName), fileType);
-        return fileHandler.fileExists(currentPath + "/" + mainFileName + ".js")
-                || fileHandler.fileExists(currentPath + "/" + mainFileName + "Spec.js");
+    public boolean checkIfFileExists(String fileName) {
+        return fileHandler.fileExists(currentPath + "/" + fileName);
     }
 }
