@@ -3,6 +3,8 @@ package org.weebly.generator;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
+import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.weebly.generator.exceptions.AngularIUnitException;
@@ -10,6 +12,7 @@ import org.weebly.generator.forms.CreateFile;
 import org.weebly.generator.forms.ErrorDialog;
 import org.weebly.generator.services.FileHandler;
 
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -21,11 +24,16 @@ import java.util.regex.Pattern;
 public class Controller extends AnAction {
     private static String currentPath = "";
     private static FileHandler fileHandler = new FileHandler();
+    AnActionEvent e;
+    Project project;
 
     public void actionPerformed(AnActionEvent e) {
         currentPath = e.getData(PlatformDataKeys.VIRTUAL_FILE).getPath();
+        project = e.getData(PlatformDataKeys.PROJECT);
         System.out.println(currentPath);
         new CreateFile(this).showDialog();
+        this.e = e;
+
     }
 
     public void createHandler(String fileName, String fileType) {
@@ -35,12 +43,30 @@ public class Controller extends AnAction {
             String testFileName = mainFileName + "Spec";
             fileHandler.createFile(mainFileName + ".js", currentPath);
             fileHandler.createFile(testFileName + ".js", currentPath);
-
             File currentDirectory = new File(currentPath);
-            VirtualFile fileByIoFile = LocalFileSystem.getInstance().findFileByIoFile(currentDirectory);
+
+            VirtualFile fileByIoFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(currentDirectory);
+
             if (fileByIoFile != null) {
+                fileByIoFile.getChildren();
                 fileByIoFile.refresh(false, true);
+
+                File toBeOpened = new File(currentPath + "/" + testFileName + ".js");
+                VirtualFile vfToBeOpened = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(toBeOpened);
+                if (vfToBeOpened != null) {
+                    FileEditorManager.getInstance(project).openFile(vfToBeOpened, true);
+                }
+
+                toBeOpened = new File(currentPath + "/" + mainFileName + ".js");
+                vfToBeOpened = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(toBeOpened);
+                if (vfToBeOpened != null) {
+                    FileEditorManager.getInstance(project).openFile(vfToBeOpened, true);
+                }
+
+            } else {
+                System.out.println("File not refreshed");
             }
+
         } catch (AngularIUnitException ae) {
             showError(ae.getName(), ae.getDescription());
         } catch (Exception e) {
