@@ -91,11 +91,12 @@ public class FileHandler {
      * @param content text to write to file
      */
     public void writeFileContent(File file, String content) {
-        FileWriter fw = null;
+        FileWriter fw;
         try {
             fw = new FileWriter(file.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(fw);
             bw.write(content);
+            bw.flush();
             bw.close();
         } catch (IOException e1) {
             e1.printStackTrace();

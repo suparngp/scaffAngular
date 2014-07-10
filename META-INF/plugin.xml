@@ -26,6 +26,7 @@
     <depends>com.intellij.modules.lang</depends>
   <extensions defaultExtensionNs="com.intellij">
     <!-- Add your extensions here -->
+      <applicationService serviceImplementation="org.weebly.generator.components.ConfigurationLoader"/>
   </extensions>
 
   <application-components>
@@ -42,7 +43,7 @@
   <actions>
     <!-- Add your actions here -->
       <action id="angularComponent" class="org.weebly.generator.Controller" text="Angular Component"
-              description="Generate a component for angular">
+              description="Generate a component for angular" icon="/icons/action.png">
           <add-to-group group-id="NewGroup" anchor="first"/>
       </action>
   </actions>

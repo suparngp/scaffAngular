@@ -4,16 +4,23 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.weebly.generator.components.Configuration;
+import org.weebly.generator.components.ConfigurationLoader;
 import org.weebly.generator.components.TemplateLoader;
 import org.weebly.generator.exceptions.AngularIUnitException;
 import org.weebly.generator.forms.CreateFile;
 import org.weebly.generator.forms.ErrorDialog;
 import org.weebly.generator.services.FileHandler;
+
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Controller Generator for angular.
@@ -25,18 +32,36 @@ public class Controller extends AnAction {
     private static AnActionEvent e;
     private static Project project;
     private static TemplateLoader templateLoader;
+    private static ConfigurationLoader configurationLoader;
+
     public void actionPerformed(AnActionEvent e) {
-        currentPath = e.getData(PlatformDataKeys.VIRTUAL_FILE).getPath();
+        VirtualFile data = e.getData(PlatformDataKeys.VIRTUAL_FILE);
+        if(data == null){
+            showError("Unknown Error", "Please file an issue if you think this is a bug");
+            return;
+        }
+        else{
+            currentPath = data.getPath();
+        }
+
         project = e.getData(PlatformDataKeys.PROJECT);
         //System.out.println(currentPath);
         templateLoader = ApplicationManager.getApplication().getComponent(TemplateLoader.class);
+        configurationLoader = ServiceManager.getService(ConfigurationLoader.class);
+        if(configurationLoader.getState() == null){
+            configurationLoader.loadState(new Configuration());
+        }
         new CreateFile(this).showDialog();
         Controller.e = e;
     }
 
-    public void createHandler(String fileName, String fileType, String moduleName) {
+    public void createHandler(HashMap<String, String> properties) {
+        String fileName = properties.get("fileName"),
+                fileType = properties.get("fileType"),
+                moduleName = properties.get("moduleName");
         //System.out.println(fileName + " creating at " + currentPath);
         try {
+
             String mainFileName = getSrcFilename(fileName, fileType);
             String testFileName = getTestFilename(fileName, fileType);
             File mainFile = fileHandler.createFile(mainFileName, currentPath);
@@ -56,10 +81,18 @@ public class Controller extends AnAction {
                         getFilenameWithSuffix(fileName, fileType), moduleName));
 
                 //open the file after writing content to it.
-                processFile(mainFileName);
                 processFile(testFileName);
+                processFile(mainFileName);
+                //since everything is successful add the module name to the configuration
+
+                if(configurationLoader.getState() != null
+                        && configurationLoader.getState().getModuleNameSuggestions() != null
+                        && !configurationLoader.getState().getModuleNameSuggestions().contains(moduleName)){
+                    configurationLoader.getState().getModuleNameSuggestions().add(moduleName);
+                }
+
             } else {
-                //System.out.println("File not refreshed");
+                System.out.println("File not refreshed");
             }
 
         } catch (AngularIUnitException ae) {
@@ -84,7 +117,7 @@ public class Controller extends AnAction {
      * Gets the file name with the required type based on if its a controller or a directive or a service
      *
      * @param fileName the filename
-     * @param type the type of the file
+     * @param type     the type of the file
      * @return the file name with file type
      */
     private String getFilenameWithSuffix(String fileName, String type) {
@@ -103,7 +136,7 @@ public class Controller extends AnAction {
 
     private String getSrcContentByType(String type, String componentName, String moduleName) {
         if (type.equalsIgnoreCase("controller")) {
-            String content =  templateLoader.getDocTemplates().get("controller") + "\n\n" + templateLoader.getCodeTemplates().get("controller");
+            String content = templateLoader.getDocTemplates().get("controller") + "\n\n" + templateLoader.getCodeTemplates().get("controller");
             return content.replaceAll("#COMPONENTNAME#", componentName).replaceAll("#MODULENAME#", moduleName);
         } else if (type.equalsIgnoreCase("directive")) {
             String content = templateLoader.getDocTemplates().get("directive") + "\n\n" + templateLoader.getCodeTemplates().get("directive");
@@ -118,7 +151,7 @@ public class Controller extends AnAction {
 
     private String getTestContentByType(String type, String componentName, String moduleName) {
         if (type.equalsIgnoreCase("controller")) {
-            String content =  templateLoader.getDocTemplates().get("controllerSpec") + "\n\n" + templateLoader.getCodeTemplates().get("controllerSpec");
+            String content = templateLoader.getDocTemplates().get("controllerSpec") + "\n\n" + templateLoader.getCodeTemplates().get("controllerSpec");
             return content.replaceAll("#COMPONENTNAME#", componentName).replaceAll("#MODULENAME#", moduleName);
         } else if (type.equalsIgnoreCase("directive")) {
             String content = templateLoader.getDocTemplates().get("directiveSpec") + "\n\n" + templateLoader.getCodeTemplates().get("directiveSpec");
@@ -131,11 +164,11 @@ public class Controller extends AnAction {
         return "";
     }
 
-    public String getSrcFilename(String baseName, String fileType ) {
+    public String getSrcFilename(String baseName, String fileType) {
         return getFilenameWithSuffix(baseName, fileType) + ".js";
     }
 
-    public String getTestFilename(String baseName, String fileType ) {
+    public String getTestFilename(String baseName, String fileType) {
         return getFilenameWithSuffix(baseName, fileType) + "Spec.js";
     }
 
@@ -157,5 +190,16 @@ public class Controller extends AnAction {
      */
     public boolean checkIfFileExists(String fileName) {
         return fileHandler.fileExists(currentPath + "/" + fileName);
+    }
+
+    /**
+     * Returns the suggestions for the module names
+     *
+     * @return the list of module names used so far
+     */
+    public List<String> getModuleNameSuggestions() {
+        return configurationLoader.getState() == null
+                ? new ArrayList<String>()
+                : configurationLoader.getState().getModuleNameSuggestions();
     }
 }
