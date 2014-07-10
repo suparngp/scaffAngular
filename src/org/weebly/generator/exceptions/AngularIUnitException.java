@@ -14,7 +14,7 @@ public class AngularIUnitException extends Exception {
      * Creates a AngularIUnitException instance
      * @param name the name of the exception
      * @param description the description of the exception
-     * @param code the code associated with the exception
+     * @param code the templates.code associated with the exception
      */
     public AngularIUnitException(String name, String description, ExceptionCode code){
         this.name = name;
@@ -42,9 +42,9 @@ public class AngularIUnitException extends Exception {
 
 
     /**
-     * Gets the exception code
+     * Gets the exception templates.code
      *
-     * @return the exception code
+     * @return the exception templates.code
      */
     public ExceptionCode getCode() {
         return code;

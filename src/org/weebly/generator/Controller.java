@@ -3,19 +3,17 @@ package org.weebly.generator;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.weebly.generator.components.TemplateLoader;
 import org.weebly.generator.exceptions.AngularIUnitException;
 import org.weebly.generator.forms.CreateFile;
 import org.weebly.generator.forms.ErrorDialog;
 import org.weebly.generator.services.FileHandler;
-
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 
 /**
  * Controller Generator for angular.
@@ -24,19 +22,20 @@ import java.io.IOException;
 public class Controller extends AnAction {
     private static String currentPath = "";
     private static FileHandler fileHandler = new FileHandler();
-    AnActionEvent e;
-    Project project;
-
+    private static AnActionEvent e;
+    private static Project project;
+    private static TemplateLoader templateLoader;
     public void actionPerformed(AnActionEvent e) {
         currentPath = e.getData(PlatformDataKeys.VIRTUAL_FILE).getPath();
         project = e.getData(PlatformDataKeys.PROJECT);
-        System.out.println(currentPath);
+        //System.out.println(currentPath);
+        templateLoader = ApplicationManager.getApplication().getComponent(TemplateLoader.class);
         new CreateFile(this).showDialog();
-        this.e = e;
+        Controller.e = e;
     }
 
-    public void createHandler(String fileName, String fileType) {
-        System.out.println(fileName + " creating at " + currentPath);
+    public void createHandler(String fileName, String fileType, String moduleName) {
+        //System.out.println(fileName + " creating at " + currentPath);
         try {
             String mainFileName = getSrcFilename(fileName, fileType);
             String testFileName = getTestFilename(fileName, fileType);
@@ -50,13 +49,17 @@ public class Controller extends AnAction {
                 fileByIoFile.getChildren();
                 fileByIoFile.refresh(false, true);
 
-                processFile(mainFileName);
-                fileHandler.writeFileContent(mainFile, getSrcContentByType(fileType));
 
+                fileHandler.writeFileContent(mainFile, getSrcContentByType(fileType,
+                        getFilenameWithSuffix(fileName, fileType), moduleName));
+                fileHandler.writeFileContent(testFile, getTestContentByType(fileType,
+                        getFilenameWithSuffix(fileName, fileType), moduleName));
+
+                //open the file after writing content to it.
+                processFile(mainFileName);
                 processFile(testFileName);
-                fileHandler.writeFileContent(testFile, getTestContentByType(fileType));
             } else {
-                System.out.println("File not refreshed");
+                //System.out.println("File not refreshed");
             }
 
         } catch (AngularIUnitException ae) {
@@ -98,25 +101,31 @@ public class Controller extends AnAction {
         return fileName;
     }
 
-    private String getSrcContentByType(String type) {
-        if (type.equals("Controller")) {
-            return "";
-        } else if (type.equals("Directive")) {
-            return "";
-        } else if (type.equals("Service")) {
-            return "";
+    private String getSrcContentByType(String type, String componentName, String moduleName) {
+        if (type.equalsIgnoreCase("controller")) {
+            String content =  templateLoader.getDocTemplates().get("controller") + "\n\n" + templateLoader.getCodeTemplates().get("controller");
+            return content.replaceAll("#COMPONENTNAME#", componentName).replaceAll("#MODULENAME#", moduleName);
+        } else if (type.equalsIgnoreCase("directive")) {
+            String content = templateLoader.getDocTemplates().get("directive") + "\n\n" + templateLoader.getCodeTemplates().get("directive");
+            return content.replaceAll("#COMPONENTNAME#", componentName).replaceAll("#MODULENAME#", moduleName);
+        } else if (type.equalsIgnoreCase("service")) {
+            String content = templateLoader.getDocTemplates().get("service") + "\n\n" + templateLoader.getCodeTemplates().get("service");
+            return content.replaceAll("#COMPONENTNAME#", componentName).replaceAll("#MODULENAME#", moduleName);
         }
 
         return "";
     }
 
-    private String getTestContentByType(String type) {
-        if (type.equals("Controller")) {
-            return "";
-        } else if (type.equals("Directive")) {
-            return "";
-        } else if (type.equals("Service")) {
-            return "";
+    private String getTestContentByType(String type, String componentName, String moduleName) {
+        if (type.equalsIgnoreCase("controller")) {
+            String content =  templateLoader.getDocTemplates().get("controllerSpec") + "\n\n" + templateLoader.getCodeTemplates().get("controllerSpec");
+            return content.replaceAll("#COMPONENTNAME#", componentName).replaceAll("#MODULENAME#", moduleName);
+        } else if (type.equalsIgnoreCase("directive")) {
+            String content = templateLoader.getDocTemplates().get("directiveSpec") + "\n\n" + templateLoader.getCodeTemplates().get("directiveSpec");
+            return content.replaceAll("#COMPONENTNAME#", componentName).replaceAll("#MODULENAME#", moduleName);
+        } else if (type.equalsIgnoreCase("service")) {
+            String content = templateLoader.getDocTemplates().get("serviceSpec") + "\n\n" + templateLoader.getCodeTemplates().get("serviceSpec");
+            return content.replaceAll("#COMPONENTNAME#", componentName).replaceAll("#MODULENAME#", moduleName);
         }
 
         return "";
@@ -144,7 +153,7 @@ public class Controller extends AnAction {
      * Checks if the main JS file and test file exists
      *
      * @param fileName the filename
-     * @return true if the files don't exist, otherwise false
+     * @return true if the templates don't exist, otherwise false
      */
     public boolean checkIfFileExists(String fileName) {
         return fileHandler.fileExists(currentPath + "/" + fileName);

@@ -90,7 +90,7 @@ public class CreateFile extends JDialog {
     private String getObjectType() {return (String)fileType.getSelectedItem();}
 
     private void onOK() {
-        this.controller.createHandler(getBaseName(), (String) fileType.getSelectedItem());
+        this.controller.createHandler(getBaseName(), (String) fileType.getSelectedItem(), moduleName.getText());
         dispose();
     }
 

@@ -47,12 +47,12 @@ public class ErrorDialog extends JDialog {
     }
 
     private void onOK() {
-// add your code here
+// add your templates.code here
         dispose();
     }
 
     private void onCancel() {
-// add your code here if necessary
+// add your templates.code here if necessary
         dispose();
     }
 

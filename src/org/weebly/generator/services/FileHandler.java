@@ -10,7 +10,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 /**
- * Contains APIs to handle the files
+ * Contains APIs to handle the templates
  * Created by IronMan on 7/8/14.
  */
 
