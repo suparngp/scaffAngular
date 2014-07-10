@@ -33,9 +33,11 @@ With this information available, the plugin
 <blockquote>
 For Example, to create an angular controller with the name SillyCtrl.js, under the module name app.insane:
 
-1. Select component type as controller
-2. Enter "Silly" in file name - without quotes of course
-3. Enter "app.insane" in module name - without quotes of course
+    <ol>
+        <li>Select component type as controller</li>
+        <li>Enter "Silly" in file name - without quotes of course</li>
+        <li>Enter "app.insane" in module name - without quotes of course</li>
+    </ol>
 
 This will bootstrap the required component.
 </blockquote>
