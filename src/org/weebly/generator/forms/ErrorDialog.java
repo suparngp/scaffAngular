@@ -58,6 +58,7 @@ public class ErrorDialog extends JDialog {
 
     public  void display() {
         this.pack();
+        this.setLocationRelativeTo(null);
         this.setVisible(true);
     }
 }

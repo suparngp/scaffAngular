@@ -1,4 +1,4 @@
-package org.weebly.generator;
+package org.weebly.generator.actions;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -26,7 +26,7 @@ import java.util.List;
  * Controller Generator for angular.
  * Created by suparngupta on 7/7/14.
  */
-public class Controller extends AnAction {
+public class CreateAction extends AnAction {
     private static String currentPath = "";
     private static FileHandler fileHandler = new FileHandler();
     private static AnActionEvent e;
@@ -52,9 +52,25 @@ public class Controller extends AnAction {
             configurationLoader.loadState(new Configuration());
         }
         new CreateFile(this).showDialog();
-        Controller.e = e;
+        CreateAction.e = e;
     }
 
+    @Override
+    public void update(AnActionEvent e) {
+        super.update(e);
+        VirtualFile file = e.getData(PlatformDataKeys.VIRTUAL_FILE);
+        if(file == null || !file.isDirectory()){
+            e.getPresentation().setEnabled(false);
+        }
+        else{
+            e.getPresentation().setEnabled(true);
+        }
+    }
+
+    /**
+     * Handles the callback from the UI to create the component
+     * @param properties the properties of the component to be created
+     */
     public void createHandler(HashMap<String, String> properties) {
         String fileName = properties.get("fileName"),
                 fileType = properties.get("fileType"),
@@ -83,13 +99,29 @@ public class Controller extends AnAction {
                 //open the file after writing content to it.
                 processFile(testFileName);
                 processFile(mainFileName);
-                //since everything is successful add the module name to the configuration
 
-                if(configurationLoader.getState() != null
-                        && configurationLoader.getState().getModuleNameSuggestions() != null
-                        && !configurationLoader.getState().getModuleNameSuggestions().contains(moduleName)){
-                    configurationLoader.getState().getModuleNameSuggestions().add(moduleName);
+
+                //since all the files have been created successfully, add the data to persistent state.
+                Configuration state = configurationLoader.getState();
+                if(state != null){
+                    if(state.getMainSpecFilesMap() == null){
+                        state.setMainSpecFilesMap(new HashMap<String, String>());
+                    }
+                    state.getMainSpecFilesMap().put(mainFileName, currentPath + "/" + testFileName);
+
+                    if(state.getModuleNameSuggestions() == null){
+                        state.setModuleNameSuggestions(new ArrayList<String>());
+                    }
+                    if(!state.getModuleNameSuggestions().contains(moduleName)){
+                        state.getModuleNameSuggestions().add(moduleName);
+                    }
                 }
+
+//                if(configurationLoader.getState() != null
+//                        && configurationLoader.getState().getModuleNameSuggestions() != null
+//                        && !configurationLoader.getState().getModuleNameSuggestions().contains(moduleName)){
+//                    configurationLoader.getState().getModuleNameSuggestions().add(moduleName);
+//                }
 
             } else {
                 System.out.println("File not refreshed");

@@ -1,6 +1,6 @@
 package org.weebly.generator.forms;
 
-import org.weebly.generator.Controller;
+import org.weebly.generator.actions.CreateAction;
 
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
@@ -21,15 +21,15 @@ public class CreateFile extends JDialog {
     private JLabel warningtext;
     private JTextField objectName;
     private JComboBox<String> moduleName;
-    private Controller controller;
+    private CreateAction createAction;
     private List<String> allItems;
 
     private boolean isModuleNameAvailable = false;
     private boolean isFileNameAvailable = false;
-    public CreateFile(Controller angularController) {
+    public CreateFile(CreateAction createAction) {
         super();
-        this.controller = angularController;
-        allItems = this.controller.getModuleNameSuggestions();
+        this.createAction = createAction;
+        allItems = this.createAction.getModuleNameSuggestions();
         setOkButtonState();
         setContentPane(contentPane);
         setModal(true);
@@ -79,10 +79,10 @@ public class CreateFile extends JDialog {
     }
 
     private void refresh() {
-        mainFileName.setText(controller.getSrcFilename(getBaseName(), getObjectType()));
-        testFileName.setText(controller.getTestFilename(getBaseName(), getObjectType()));
+        mainFileName.setText(createAction.getSrcFilename(getBaseName(), getObjectType()));
+        testFileName.setText(createAction.getTestFilename(getBaseName(), getObjectType()));
 
-        boolean exists = controller.checkIfFileExists(mainFileName.getText()) && controller.checkIfFileExists(testFileName.getText());
+        boolean exists = createAction.checkIfFileExists(mainFileName.getText()) && createAction.checkIfFileExists(testFileName.getText());
 
         if (exists) {
             isFileNameAvailable = false;
@@ -113,8 +113,8 @@ public class CreateFile extends JDialog {
         properties.put("fileName", getBaseName());
         properties.put("fileType", (String) fileType.getSelectedItem());
         properties.put("moduleName", (String) moduleName.getSelectedItem());
-        this.controller.createHandler(properties);
-//        this.controller.createHandler(getBaseName(), (String) fileType.getSelectedItem(), moduleName.getText());
+        this.createAction.createHandler(properties);
+//        this.createAction.createHandler(getBaseName(), (String) fileType.getSelectedItem(), moduleName.getText());
         dispose();
     }
 
@@ -125,12 +125,16 @@ public class CreateFile extends JDialog {
     public void showDialog() {
         warningLabel.setVisible(false);
         warningtext.setVisible(false);
-        this.setLocationRelativeTo(null);
+
         this.objectName.grabFocus();
         this.pack();
+        this.setLocationRelativeTo(null);
         this.setVisible(true);
     }
 
+    /**
+     * Event Handler to handle key released event for the auto complete box.
+     */
     private class KeyEventHandler extends KeyAdapter {
         @Override
         public void keyReleased(KeyEvent e) {

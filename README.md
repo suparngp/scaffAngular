@@ -1,4 +1,4 @@
-angular-iunit
+ScaffAngular (angular-iunit)
 =============
 
 An IntelliJ Unit Test Manager Plugin for Angular JS Modules

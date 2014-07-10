@@ -1,6 +1,7 @@
 package org.weebly.generator.components;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -9,9 +10,10 @@ import java.util.List;
  */
 public class Configuration {
     private List<String> moduleNameSuggestions;
-
+    private HashMap<String, String> mainSpecFilesMap;
     public Configuration(){
         this.moduleNameSuggestions = new ArrayList<String>();
+        this.mainSpecFilesMap = new HashMap<String, String>();
     }
 
 
@@ -31,5 +33,21 @@ public class Configuration {
      */
     public List<String> getModuleNameSuggestions() {
         return moduleNameSuggestions;
+    }
+
+    /**
+     * Gets the mainSpecFilesMap
+     * @return Value of mainSpecFilesMap
+     */
+    public HashMap<String, String> getMainSpecFilesMap() {
+        return mainSpecFilesMap;
+    }
+
+    /**
+     * Gets the mainSpecFilesMap
+     * @param mainSpecFilesMap New value of main
+     */
+    public void setMainSpecFilesMap(HashMap<String, String> mainSpecFilesMap) {
+        this.mainSpecFilesMap = mainSpecFilesMap;
     }
 }

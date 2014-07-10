@@ -1,51 +1,75 @@
 <idea-plugin version="2">
-  <id>org.weebly.generator</id>
-  <name>Generator plugin</name>
-  <version>1.0</version>
-  <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
+    <id>org.weebly.generator</id>
+    <name>ScaffAngular</name>
+    <version>1.0</version>
+    <vendor email="weeblysup@gmail.com">Weebly</vendor>
 
-  <description><![CDATA[
-      A very simple plugin to keep angular components and tests in sync.<br>
-      <em>Add more description</em>
+    <description><![CDATA[
+      An Intelligent Unit Test Manager Plugin for Angular JS Modules
+
+      <h1>What is it about?</h1>
+        <p>This plugin aims at following three core issues:
+            <ol>
+            <li>Standardizing the naming convention of angular components across the application</li>
+
+            <li>Bootstrapping and managing the test files right from the component's source file</li>
+
+            <li>Bootstrapping documentation for the components and their respective test scenarios</li>
+
+            </ol>
+        </p>
+
+        <h4>Github Repo</h4>
+        <p>For any bugs or feature requests, go to the <a href="https://github.com/suparngp/angular-iunit">GitHub repo</a>.</p>
     ]]></description>
 
-  <change-notes><![CDATA[
-      Add change notes here.<br>
-      <em>most HTML tags may be used</em>
+    <change-notes><![CDATA[
+     <em>
+        <ol>
+            <li>Added File Creation and management</li>
+            <li>Added Spec navigation</li>
+            <li>Persistent configuration to store settings and data</li>
+            <li>Added autocomplete for module names</li>
+        </ol>
+     </em>
     ]]>
-  </change-notes>
+    </change-notes>
 
-  <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->
-  <idea-version since-build="131"/>
+    <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->
+    <idea-version since-build="131"/>
 
-  <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
-       on how to target different products -->
-  <!-- uncomment to enable plugin in all products
-  <depends>com.intellij.modules.lang</depends>
-  -->
+    <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
+         on how to target different products -->
+    <!-- uncomment to enable plugin in all products
     <depends>com.intellij.modules.lang</depends>
-  <extensions defaultExtensionNs="com.intellij">
-    <!-- Add your extensions here -->
-      <applicationService serviceImplementation="org.weebly.generator.components.ConfigurationLoader"/>
-  </extensions>
+    -->
+    <depends>com.intellij.modules.lang</depends>
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+        <applicationService serviceImplementation="org.weebly.generator.components.ConfigurationLoader"/>
+    </extensions>
 
-  <application-components>
-    <!-- Add your application components here -->
-      <component>
-          <implementation-class>org.weebly.generator.components.TemplateLoader</implementation-class>
-      </component>
-  </application-components>
+    <application-components>
+        <!-- Add your application components here -->
+        <component>
+            <implementation-class>org.weebly.generator.components.TemplateLoader</implementation-class>
+        </component>
+    </application-components>
 
-  <project-components>
-    <!-- Add your project components here -->
-  </project-components>
+    <project-components>
+        <!-- Add your project components here -->
+    </project-components>
 
-  <actions>
-    <!-- Add your actions here -->
-      <action id="angularComponent" class="org.weebly.generator.Controller" text="Angular Component"
-              description="Generate a component for angular" icon="/icons/action.png">
-          <add-to-group group-id="NewGroup" anchor="first"/>
-      </action>
-  </actions>
+    <actions>
+        <!-- Add your actions here -->
+        <action id="angularComponent" class="org.weebly.generator.actions.CreateAction" text="Angular Component"
+                description="Generate a component for angular" icon="/icons/action.png">
+            <add-to-group group-id="NewGroup" anchor="first"/>
+        </action>
+        <action id="specNavigation" class="org.weebly.generator.actions.SpecNavigationAction" text="Go to Test Spec"
+                description="Opens the spec file for the current source file." icon="/icons/action.png">
+            <add-to-group group-id="CutCopyPasteGroup" anchor="first"/>
+        </action>
+    </actions>
 
 </idea-plugin>
