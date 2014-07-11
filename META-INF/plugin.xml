@@ -26,10 +26,8 @@
     <change-notes><![CDATA[
      <em>
         <ol>
-            <li>Added File Creation and management</li>
-            <li>Added Spec navigation</li>
-            <li>Persistent configuration to store settings and data</li>
-            <li>Added autocomplete for module names</li>
+            <li>Added Spec Navigation for files not created using the plugin!</li>
+            <li>Bug Fixes. Refer to the issues.</li>
         </ol>
      </em>
     ]]>

@@ -27,7 +27,9 @@ With this information available, the plugin
 2. Adds the ngdocs based documentation to the component's source file, e.g. MainCtrl.js.
 3. Bootstraps the controller with the basic template
 4. Adds jsdocs documentation to the test spec file, e.g. MainCtrlSpec.js
-5. Bootstraps the basic instantiation test! You don't need to write the instantiation tests anymore! Yay! (saves hell lot of time and great for basic test coverage)
+5. Bootstraps the basic instantiation test! You don't need to write the instantiation tests anymore!
+ Yay! (saves hell lot of time and great for basic test coverage)
+6. Navigate to test specs from source files, even for those not created using this plugin (Well, conditions apply).
 
 
 <blockquote>

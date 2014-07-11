@@ -4,14 +4,10 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.weebly.generator.components.Configuration;
 import org.weebly.generator.components.ConfigurationLoader;
-
-import java.io.File;
 
 /**
  * Test Spec Navigation Action
@@ -44,12 +40,12 @@ public class SpecNavigationAction extends AnAction {
             if (testFilePath == null) {
                 return;
             }
-            File toBeOpened;
-            VirtualFile vfToBeOpened;
-            toBeOpened = new File(testFilePath);
-            vfToBeOpened = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(toBeOpened);
-            if (vfToBeOpened != null) {
-                FileEditorManager.getInstance(project).openFile(vfToBeOpened, true);
+            Commons.openFileInEditor(project, testFilePath);
+        } else{
+            String testFilePath = file.getParent().getPath() + "/" + name.replace(".js", "Spec.js");
+            boolean opened = Commons.openFileInEditor(project, testFilePath);
+            if (opened){
+                configurationLoader.getState().getMainSpecFilesMap().put(name, testFilePath);
             }
         }
     }
@@ -57,10 +53,20 @@ public class SpecNavigationAction extends AnAction {
     @Override
     public void update(AnActionEvent e) {
         super.update(e);
+        configurationLoader = ServiceManager.getService(ConfigurationLoader.class);
         VirtualFile file = e.getData(PlatformDataKeys.VIRTUAL_FILE);
         if(file == null || file.isDirectory()){
             e.getPresentation().setEnabled(false);
+            return;
         }
+
+        Configuration state = configurationLoader.getState();
+        if (state == null
+                || state.getMainSpecFilesMap() == null
+                || state.getMainSpecFilesMap().isEmpty()) {
+            e.getPresentation().setEnabled(false);
+        }
+
         else{
             e.getPresentation().setEnabled(true);
         }

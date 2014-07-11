@@ -4,7 +4,6 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -34,6 +33,7 @@ public class CreateAction extends AnAction {
     private static ConfigurationLoader configurationLoader;
 
     public void actionPerformed(AnActionEvent _e_) {
+        e = _e_;
         VirtualFile data = e.getData(PlatformDataKeys.VIRTUAL_FILE);
         if(data == null){
             showError("Unknown Error", "Please file an issue if you think this is a bug");
@@ -44,15 +44,12 @@ public class CreateAction extends AnAction {
         }
 
         project = e.getData(PlatformDataKeys.PROJECT);
-        //System.out.println(currentPath);
-//        templateLoader = ApplicationManager.getApplication().getComponent(TemplateLoader.class);
         templateLoader = ServiceManager.getService(TemplateLoader.class);
         configurationLoader = ServiceManager.getService(ConfigurationLoader.class);
         if(configurationLoader.getState() == null){
             configurationLoader.loadState(new Configuration());
         }
         new CreateFile(this).showDialog();
-        e = _e_;
     }
 
     @Override
@@ -119,12 +116,6 @@ public class CreateAction extends AnAction {
                     }
                 }
 
-//                if(configurationLoader.getState() != null
-//                        && configurationLoader.getState().getModuleNameSuggestions() != null
-//                        && !configurationLoader.getState().getModuleNameSuggestions().contains(moduleName)){
-//                    configurationLoader.getState().getModuleNameSuggestions().add(moduleName);
-//                }
-
             } else {
                 System.out.println("File not refreshed");
             }
@@ -138,13 +129,7 @@ public class CreateAction extends AnAction {
     }
 
     private void processFile(String filename) {
-        File toBeOpened;
-        VirtualFile vfToBeOpened;
-        toBeOpened = new File(currentPath + "/" + filename);
-        vfToBeOpened = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(toBeOpened);
-        if (vfToBeOpened != null) {
-            FileEditorManager.getInstance(project).openFile(vfToBeOpened, true);
-        }
+        Commons.openFileInEditor(project, currentPath + "/" + filename);
     }
 
     /**
@@ -172,7 +157,6 @@ public class CreateAction extends AnAction {
         if (type.equalsIgnoreCase("controller")) {
             String content = templateLoader.getDocTemplates().get("controller") + "\n\n" + templateLoader.getCodeTemplates().get("controller");
             return content.replaceAll("#COMPONENTNAME#", componentName).replaceAll("#MODULENAME#", moduleName);
-//            return templateLoader.paths.toString();
         } else if (type.equalsIgnoreCase("directive")) {
             String content = templateLoader.getDocTemplates().get("directive") + "\n\n" + templateLoader.getCodeTemplates().get("directive");
             return content.replaceAll("#COMPONENTNAME#", componentName).replaceAll("#MODULENAME#", moduleName);
