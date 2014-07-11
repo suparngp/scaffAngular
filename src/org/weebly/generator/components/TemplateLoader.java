@@ -1,30 +1,28 @@
 package org.weebly.generator.components;
 
-import com.intellij.openapi.components.ApplicationComponent;
-import com.intellij.util.PathUtil;
-import org.jetbrains.annotations.NotNull;
 import org.weebly.generator.exceptions.FileNotFoundException;
 
 import java.io.*;
-import java.util.Arrays;
 import java.util.HashMap;
 
 /**
- * Application Component to load the template templates.
- * Created by IronMan on 7/9/14.
+ * Service to load file templates.
+ * Created by IronMan on 7/11/14.
  */
-public class TemplateLoader implements ApplicationComponent {
-
+public class TemplateLoader {
     private HashMap<String, String> docTemplates;
     private HashMap<String, String> codeTemplates;
+    public boolean isLoaded = false;
 
     public TemplateLoader() {
         docTemplates = new HashMap<String, String>();
         codeTemplates = new HashMap<String, String>();
+        initComponent();
     }
 
-    public void initComponent() {
-        try{
+    public final void initComponent() {
+        try {
+            isLoaded = true;
             //System.out.println("I am invoked");
             String docPath = "/templates/docs/";
             String codePath = "/templates/code/";
@@ -32,71 +30,48 @@ public class TemplateLoader implements ApplicationComponent {
             String[] codeFiles = {"controller", "directive", "service", "controllerSpec", "directiveSpec", "serviceSpec"};
             String docExt = "ngdoc";
             String codeExt = "js";
-            String basePath = new File(PathUtil.getJarPathForClass(getClass())).getAbsolutePath();
-            //System.out.println(Arrays.asList(new File(basePath).listFiles()));
+//            String basePath = new File(PathUtil.getJarPathForClass(getClass())).getAbsolutePath();
+//            String basePath = "";
 
             // keep these for loops separate till we come up with a common file extension.
-            for(String docFile: docFiles){
-                String fileName = basePath + docPath + docFile + "." + docExt;
-
-                File file = new File(fileName);
-                //System.out.println(file.getAbsolutePath());
-                if(file.exists()){
-                    String contents = readFile(fileName);
-                    docTemplates.put(docFile, contents);
-                }
+            for (String docFile : docFiles) {
+                String fileName = docPath + docFile + "." + docExt;
+                String contents = readFile(fileName);
+                docTemplates.put(docFile, contents);
             }
 
 
-            for(String codeFile: codeFiles){
-                String fileName = basePath + codePath + codeFile + "." + codeExt;
-                File file = new File(fileName);
-                if(file.exists()){
-                    String contents = readFile(fileName);
-                    codeTemplates.put(codeFile, contents);
-                }
+            for (String codeFile : codeFiles) {
+                String fileName = codePath + codeFile + "." + codeExt;
+//
+                String contents = readFile(fileName);
+                codeTemplates.put(codeFile, contents);
             }
-
             //System.out.println(codeTemplates);
             //System.out.println(docTemplates);
 
-        }
-
-        catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void disposeComponent() {
-        docTemplates.clear();
-        codeTemplates.clear();
-    }
-
-    @NotNull
-    public String getComponentName() {
-        return "TemplateLoader";
-    }
-
-//    public static void main(String[] args){
-//        File file = new File("templates/templates.docs/controller.ngdoc");
-//        //System.out.println(file.exists());
-//    }
-
     /**
      * Reads the contents of the file and returns as a string
+     *
      * @param filePath the file path
      * @return the string contents
-     * @throws IOException
-     * @throws FileNotFoundException
+     * @throws java.io.IOException
+     * @throws org.weebly.generator.exceptions.FileNotFoundException
      */
     private String readFile(String filePath)
             throws IOException,
-            FileNotFoundException{
-        File file = new File(filePath);
-        BufferedReader bf = new BufferedReader(new FileReader(file));
+            FileNotFoundException {
+        ClassLoader cl = getClass().getClassLoader();
+        InputStream in = cl.getResourceAsStream(filePath);
+        BufferedReader bf = new BufferedReader(new InputStreamReader(in));
         String line;
         StringBuilder builder = new StringBuilder();
-        while((line =  bf.readLine()) != null){
+        while ((line = bf.readLine()) != null) {
             builder.append(line).append("\n");
         }
 
@@ -105,6 +80,7 @@ public class TemplateLoader implements ApplicationComponent {
 
     /**
      * Gets the map of documentation templates
+     *
      * @return the doc template map
      */
     public HashMap<String, String> getDocTemplates() {
@@ -114,10 +90,10 @@ public class TemplateLoader implements ApplicationComponent {
 
     /**
      * Gets the map of templates.code templates
+     *
      * @return the templates.code template map
      */
     public HashMap<String, String> getCodeTemplates() {
         return codeTemplates;
     }
-
 }

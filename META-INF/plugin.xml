@@ -47,13 +47,11 @@
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
         <applicationService serviceImplementation="org.weebly.generator.components.ConfigurationLoader"/>
+        <applicationService serviceImplementation="org.weebly.generator.components.TemplateLoader"/>
     </extensions>
 
     <application-components>
         <!-- Add your application components here -->
-        <component>
-            <implementation-class>org.weebly.generator.components.TemplateLoader</implementation-class>
-        </component>
     </application-components>
 
     <project-components>

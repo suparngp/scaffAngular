@@ -3,7 +3,6 @@ package org.weebly.generator.actions;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
@@ -34,7 +33,7 @@ public class CreateAction extends AnAction {
     private static TemplateLoader templateLoader;
     private static ConfigurationLoader configurationLoader;
 
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(AnActionEvent _e_) {
         VirtualFile data = e.getData(PlatformDataKeys.VIRTUAL_FILE);
         if(data == null){
             showError("Unknown Error", "Please file an issue if you think this is a bug");
@@ -46,13 +45,14 @@ public class CreateAction extends AnAction {
 
         project = e.getData(PlatformDataKeys.PROJECT);
         //System.out.println(currentPath);
-        templateLoader = ApplicationManager.getApplication().getComponent(TemplateLoader.class);
+//        templateLoader = ApplicationManager.getApplication().getComponent(TemplateLoader.class);
+        templateLoader = ServiceManager.getService(TemplateLoader.class);
         configurationLoader = ServiceManager.getService(ConfigurationLoader.class);
         if(configurationLoader.getState() == null){
             configurationLoader.loadState(new Configuration());
         }
         new CreateFile(this).showDialog();
-        CreateAction.e = e;
+        e = _e_;
     }
 
     @Override
@@ -97,6 +97,8 @@ public class CreateAction extends AnAction {
                         getFilenameWithSuffix(fileName, fileType), moduleName));
 
                 //open the file after writing content to it.
+                fileByIoFile.refresh(false, true);
+                fileByIoFile.getFileSystem().refresh(false);
                 processFile(testFileName);
                 processFile(mainFileName);
 
@@ -170,6 +172,7 @@ public class CreateAction extends AnAction {
         if (type.equalsIgnoreCase("controller")) {
             String content = templateLoader.getDocTemplates().get("controller") + "\n\n" + templateLoader.getCodeTemplates().get("controller");
             return content.replaceAll("#COMPONENTNAME#", componentName).replaceAll("#MODULENAME#", moduleName);
+//            return templateLoader.paths.toString();
         } else if (type.equalsIgnoreCase("directive")) {
             String content = templateLoader.getDocTemplates().get("directive") + "\n\n" + templateLoader.getCodeTemplates().get("directive");
             return content.replaceAll("#COMPONENTNAME#", componentName).replaceAll("#MODULENAME#", moduleName);

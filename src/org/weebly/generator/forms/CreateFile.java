@@ -20,7 +20,7 @@ public class CreateFile extends JDialog {
     private JLabel warningLabel;
     private JLabel warningtext;
     private JTextField objectName;
-    private JComboBox<String> moduleName;
+    private JComboBox moduleName;
     private CreateAction createAction;
     private List<String> allItems;
 
@@ -171,7 +171,7 @@ public class CreateFile extends JDialog {
                     }
                     moduleName.setSelectedItem(moduleName.getItemAt(0));
                     editor.setText(input
-                            + moduleName.getItemAt(0)
+                            + ((String)moduleName.getItemAt(0))
                             .substring(input.length()));
                     editor.setCaretPosition(input.length());
                     editor.setSelectionStart(input.length());

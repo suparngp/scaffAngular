@@ -1,8 +1,9 @@
 /**
  * @ngdoc directive
  * @name #MODULENAME#.directive:#COMPONENTNAME#
- * @restrict A
+ *
  * @description
- * <Enter Directive description>
- * <Verify the restrict annotation>
+ * _Please update the description and restriction._
+ *
+ * @restrict A
  * */

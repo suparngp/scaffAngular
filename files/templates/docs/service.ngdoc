@@ -2,6 +2,8 @@
  * @ngdoc service
  * @name #MODULENAME#.#COMPONENTNAME#
  * @description
- * <Enter the service description>
+ * _Please update the description and dependencies._
+ *
+ * @requires $replace_me
  *
  * */

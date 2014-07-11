@@ -1,4 +1,4 @@
-describe('Service: #COMPONENTNAME#', function () {
+describe('Service: #MODULENAME#.#COMPONENTNAME#', function () {
 
     // load the service's module
     beforeEach(module('#MODULENAME#'));

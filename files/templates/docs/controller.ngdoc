@@ -1,6 +1,9 @@
 /**
  * @ngdoc controller
- * @name #MODULENAME#.#COMPONENTNAME#
+ * @name #MODULENAME#.controller:#COMPONENTNAME#
+ *
  * @description
- * <Enter the controller's description>
+ * _Please update the description and dependencies._
+ *
+ * @requires $scope
  * */

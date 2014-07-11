@@ -1,4 +1,4 @@
-describe('Directive: #COMPONENTNAME#', function () {
+describe('Directive: #MODULENAME#.#COMPONENTNAME#', function () {
     var ele, scope;
 
     beforeEach(module('#MODULENAME#'));

@@ -1,4 +1,4 @@
-describe('Controller: #COMPONENTNAME#', function () {
+describe('Controller: #MODULENAME#.#COMPONENTNAME#', function () {
 
     // load the controller's module
     beforeEach(module('#MODULENAME#'));
