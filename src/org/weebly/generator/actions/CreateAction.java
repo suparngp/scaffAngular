@@ -159,7 +159,7 @@ public class CreateAction extends AnAction {
             return content.replaceAll("#COMPONENTNAME#", componentName).replaceAll("#MODULENAME#", moduleName);
         } else if (type.equalsIgnoreCase("directive")) {
             String content = templateLoader.getDocTemplates().get("directive") + "\n\n" + templateLoader.getCodeTemplates().get("directive");
-            return content.replaceAll("#COMPONENTNAME#", componentName).replaceAll("#MODULENAME#", moduleName);
+            return content.replaceAll("#COMPONENTNAME#", componentName.replace("Directive", "")).replaceAll("#MODULENAME#", moduleName);
         } else if (type.equalsIgnoreCase("service")) {
             String content = templateLoader.getDocTemplates().get("service") + "\n\n" + templateLoader.getCodeTemplates().get("service");
             return content.replaceAll("#COMPONENTNAME#", componentName).replaceAll("#MODULENAME#", moduleName);
@@ -174,7 +174,7 @@ public class CreateAction extends AnAction {
             return content.replaceAll("#COMPONENTNAME#", componentName).replaceAll("#MODULENAME#", moduleName);
         } else if (type.equalsIgnoreCase("directive")) {
             String content = templateLoader.getDocTemplates().get("directiveSpec") + "\n\n" + templateLoader.getCodeTemplates().get("directiveSpec");
-            return content.replaceAll("#COMPONENTNAME#", componentName).replaceAll("#MODULENAME#", moduleName);
+            return content.replaceAll("#COMPONENTNAME#", componentName.replace("Directive", "")).replaceAll("#MODULENAME#", moduleName);
         } else if (type.equalsIgnoreCase("service")) {
             String content = templateLoader.getDocTemplates().get("serviceSpec") + "\n\n" + templateLoader.getCodeTemplates().get("serviceSpec");
             return content.replaceAll("#COMPONENTNAME#", componentName).replaceAll("#MODULENAME#", moduleName);
