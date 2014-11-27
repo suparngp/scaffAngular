@@ -115,6 +115,7 @@
                     <item value="Controller"/>
                     <item value="Directive"/>
                     <item value="Service"/>
+                    <item value="Filter"/>
                   </model>
                 </properties>
               </component>

@@ -26,8 +26,8 @@ public class TemplateLoader {
             //System.out.println("I am invoked");
             String docPath = "/templates/docs/";
             String codePath = "/templates/code/";
-            String[] docFiles = {"controller", "directive", "service", "controllerSpec", "directiveSpec", "serviceSpec"};
-            String[] codeFiles = {"controller", "directive", "service", "controllerSpec", "directiveSpec", "serviceSpec"};
+            String[] docFiles = {"controller", "directive", "service", "filter", "controllerSpec", "directiveSpec", "serviceSpec", "filterSpec"};
+            String[] codeFiles = {"controller", "directive", "service", "filter", "controllerSpec", "directiveSpec", "serviceSpec", "filterSpec"};
             String docExt = "ngdoc";
             String codeExt = "js";
 //            String basePath = new File(PathUtil.getJarPathForClass(getClass())).getAbsolutePath();
