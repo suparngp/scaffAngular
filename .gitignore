@@ -1,2 +1,8 @@
 out/*
-.idea/*
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/shelf
+.idea/dictionaries
+.idea/copyright
+.idea/findbugs-idea.xml
+*.jar
