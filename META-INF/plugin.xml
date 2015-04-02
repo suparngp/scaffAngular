@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>org.weebly.generator</id>
     <name>ScaffAngular</name>
-    <version>1.0.1</version>
+    <version>2.0.0</version>
     <vendor email="weeblysup@gmail.com">Weebly</vendor>
 
     <description>
