@@ -6,9 +6,8 @@
 
     <description>
         <![CDATA[
-          Scaffold Angular JS Components and respective unit tests.
+            Scaffold Angular JS Components and respective unit tests.
 
-          <h1>What is it about?</h1>
             <p>This plugin helps to:
                 <ol>
                     <li>Standardize naming convention of angular components across the application</li>
