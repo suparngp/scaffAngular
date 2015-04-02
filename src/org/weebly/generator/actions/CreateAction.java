@@ -7,13 +7,14 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.weebly.generator.components.Configuration;
-import org.weebly.generator.components.ConfigurationLoader;
-import org.weebly.generator.components.TemplateLoader;
-import org.weebly.generator.exceptions.AngularIUnitException;
+import org.weebly.generator.model.Component;
+import org.weebly.generator.services.Configuration;
+import org.weebly.generator.services.ConfigurationLoader;
+import org.weebly.generator.services.FileHandler;
+import org.weebly.generator.services.TemplateLoader;
+import org.weebly.generator.model.exceptions.AngularIUnitException;
 import org.weebly.generator.forms.CreateFile;
 import org.weebly.generator.forms.ErrorDialog;
-import org.weebly.generator.services.FileHandler;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -21,31 +22,38 @@ import java.util.HashMap;
 import java.util.List;
 
 public class CreateAction extends AnAction {
-    private static String currentPath = "";
-    private static FileHandler fileHandler = new FileHandler();
-    private static AnActionEvent e;
     private static Project project;
+
     private static TemplateLoader templateLoader;
     private static ConfigurationLoader configurationLoader;
 
+
+    private static String currentPath = "";
+    private static AnActionEvent e;
+
+    public CreateAction() {
+        templateLoader = ServiceManager.getService(TemplateLoader.class);
+        configurationLoader = ServiceManager.getService(ConfigurationLoader.class);
+
+        if(configurationLoader.getState() == null){
+            configurationLoader.loadState(new Configuration());
+        }
+    }
+
     public void actionPerformed(AnActionEvent _e_) {
         e = _e_;
+
         VirtualFile data = e.getData(PlatformDataKeys.VIRTUAL_FILE);
+
         if(data == null){
             showError("Unknown Error", "Please file an issue if you think this is a bug");
             return;
         }
-        else{
-            currentPath = data.getPath();
-        }
 
+        currentPath = data.getPath();
         project = e.getData(PlatformDataKeys.PROJECT);
-        templateLoader = ServiceManager.getService(TemplateLoader.class);
-        configurationLoader = ServiceManager.getService(ConfigurationLoader.class);
-        if(configurationLoader.getState() == null){
-            configurationLoader.loadState(new Configuration());
-        }
-        new CreateFile(this).showDialog();
+
+        new CreateFile(this, templateLoader.getComponentTypes()).showDialog();
     }
 
     @Override
@@ -62,19 +70,19 @@ public class CreateAction extends AnAction {
 
     /**
      * Handles the callback from the UI to create the component
-     * @param properties the properties of the component to be created
+     * @param componentName name of component
+     * @param componentType type of component
+     * @param moduleName name of module
      */
-    public void createHandler(HashMap<String, String> properties) {
-        String fileName = properties.get("fileName"),
-                fileType = properties.get("fileType"),
-                moduleName = properties.get("moduleName");
-        //System.out.println(fileName + " creating at " + currentPath);
-        try {
+    public void createAngularComponentsHandler(String componentName, String componentType, String moduleName) {
 
-            String mainFileName = getSrcFilename(fileName, fileType);
-            String testFileName = getTestFilename(fileName, fileType);
-            File mainFile = fileHandler.createFile(mainFileName, currentPath);
-            File testFile = fileHandler.createFile(testFileName, currentPath);
+        try {
+            String codeFileName = getSrcFilename(componentName, componentType);
+            String specFileName = getTestFilename(componentName, componentType);
+
+            File codeFile = FileHandler.createFile(codeFileName, currentPath);
+            File specFile = FileHandler.createFile(specFileName, currentPath);
+
             File currentDirectory = new File(currentPath);
 
             VirtualFile fileByIoFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(currentDirectory);
@@ -83,31 +91,19 @@ public class CreateAction extends AnAction {
                 fileByIoFile.getChildren();
                 fileByIoFile.refresh(false, true);
 
-                fileHandler.writeFileContent(mainFile, getSrcContentByType(fileType, getFilenameWithSuffix(fileName, fileType), moduleName));
-                fileHandler.writeFileContent(testFile, getTestContentByType(fileType, getFilenameWithSuffix(fileName, fileType), moduleName));
+                Component tmp = templateLoader.getComponents().get(componentType);
+
+                FileHandler.writeFileContent(codeFile, formatContent(tmp.code, componentName, moduleName));
+                FileHandler.writeFileContent(specFile, formatContent(tmp.spec, componentName, moduleName));
 
                 //open the file after writing content to it.
                 fileByIoFile.refresh(false, true);
                 fileByIoFile.getFileSystem().refresh(false);
-                processFile(testFileName);
-                processFile(mainFileName);
-
+                openFileInEditor(specFileName);
+                openFileInEditor(codeFileName);
 
                 //since all the files have been created successfully, add the data to persistent state.
-                Configuration state = configurationLoader.getState();
-                if(state != null){
-                    if(state.getMainSpecFilesMap() == null){
-                        state.setMainSpecFilesMap(new HashMap<String, String>());
-                    }
-                    state.getMainSpecFilesMap().put(mainFileName, currentPath + "/" + testFileName);
-
-                    if(state.getModuleNameSuggestions() == null){
-                        state.setModuleNameSuggestions(new ArrayList<String>());
-                    }
-                    if(!state.getModuleNameSuggestions().contains(moduleName)){
-                        state.getModuleNameSuggestions().add(moduleName);
-                    }
-                }
+                persistModuleName(moduleName, codeFileName, specFileName);
 
             } else {
                 System.out.println("File not refreshed");
@@ -121,7 +117,28 @@ public class CreateAction extends AnAction {
         }
     }
 
-    private void processFile(String filename) {
+    private String formatContent(String content, String componentName, String moduleName) {
+        return content.replaceAll("#COMPONENTNAME#", componentName).replaceAll("#MODULENAME#", moduleName);
+    }
+
+    private void persistModuleName(String moduleName, String codeFileName, String specFileName) {
+        Configuration state = configurationLoader.getState();
+        if(state != null){
+            if(state.getMainSpecFilesMap() == null){
+                state.setMainSpecFilesMap(new HashMap<String, String>());
+            }
+            state.getMainSpecFilesMap().put(codeFileName, currentPath + "/" + specFileName);
+
+            if(state.getModuleNameSuggestions() == null){
+                state.setModuleNameSuggestions(new ArrayList<String>());
+            }
+            if(!state.getModuleNameSuggestions().contains(moduleName)){
+                state.getModuleNameSuggestions().add(moduleName);
+            }
+        }
+    }
+
+    private void openFileInEditor(String filename) {
         Commons.openFileInEditor(project, currentPath + "/" + filename);
     }
 
@@ -133,32 +150,11 @@ public class CreateAction extends AnAction {
      * @return the file name with file type
      */
     private String getFilenameWithSuffix(String fileName, String type) {
-        if (type.equals("Controller")) {
-            fileName += "Ctrl";
-
-        } else if (type.equals("Directive")) {
-            fileName += "Directive";
-
-        } else if (type.equals("Service")) {
-            fileName += "Service";
-
-        } else if (type.equals("Filter")) {
-            fileName += "Filter";
+        if (type != null && type.equals("Controller")) {
+            return fileName + "Ctrl";
+        } else {
+            return fileName + type;
         }
-
-        return fileName;
-    }
-
-    private String getSrcContentByType(String type, String componentName, String moduleName) {
-        String itemName = type.toLowerCase();
-        String content = templateLoader.getDocTemplates().get(itemName) + "\n\n" + templateLoader.getCodeTemplates().get(itemName);
-        return content.replaceAll("#COMPONENTNAME#", componentName).replaceAll("#MODULENAME#", moduleName);
-    }
-
-    private String getTestContentByType(String type, String componentName, String moduleName) {
-        String itemName = type.toLowerCase() + "Spec";
-        String content = templateLoader.getDocTemplates().get(itemName) + "\n\n" + templateLoader.getCodeTemplates().get(itemName);
-        return content.replaceAll("#COMPONENTNAME#", componentName).replaceAll("#MODULENAME#", moduleName);
     }
 
     public String getSrcFilename(String baseName, String fileType) {
@@ -186,7 +182,7 @@ public class CreateAction extends AnAction {
      * @return true if the templates don't exist, otherwise false
      */
     public boolean checkIfFileExists(String fileName) {
-        return fileHandler.fileExists(currentPath + "/" + fileName);
+        return FileHandler.fileExists(currentPath + "/" + fileName);
     }
 
     /**

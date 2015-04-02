@@ -17,19 +17,29 @@ public class CreateFile extends JDialog {
     private JTextField mainFileName;
     private JTextField testFileName;
     private JComboBox fileType;
-    private JLabel warningLabel;
-    private JLabel warningtext;
-    private JTextField objectName;
     private JComboBox moduleName;
+    private JLabel warningLabel;
+    private JLabel warningText;
+    private JTextField objectName;
     private CreateAction createAction;
     private List<String> allItems;
 
     private boolean isModuleNameAvailable = false;
     private boolean isFileNameAvailable = false;
-    public CreateFile(CreateAction createAction) {
+
+    public CreateFile(CreateAction createAction, String[] componentTypes) {
         super();
+
         this.createAction = createAction;
+
+        //add types
+        fileType.removeAllItems();
+        for (String item : componentTypes) {
+            fileType.addItem(item);
+        }
+
         allItems = this.createAction.getModuleNameSuggestions();
+
         setOkButtonState();
         setContentPane(contentPane);
         setModal(true);
@@ -87,16 +97,14 @@ public class CreateFile extends JDialog {
         if (exists) {
             isFileNameAvailable = false;
             setOkButtonState();
-//            buttonOK.setEnabled(false);
             warningLabel.setVisible(true);
-            warningtext.setText("File already exists!");
-            warningtext.setVisible(true);
+            warningText.setText("File already exists!");
+            warningText.setVisible(true);
         } else {
             isFileNameAvailable = true;
             setOkButtonState();
-//            buttonOK.setEnabled(true);
             warningLabel.setVisible(false);
-            warningtext.setVisible(false);
+            warningText.setVisible(false);
         }
     }
 
@@ -109,12 +117,9 @@ public class CreateFile extends JDialog {
     }
 
     private void onOK() {
-        HashMap<String, String> properties = new HashMap<String, String>();
-        properties.put("fileName", getBaseName());
-        properties.put("fileType", (String) fileType.getSelectedItem());
-        properties.put("moduleName", (String) moduleName.getSelectedItem());
-        this.createAction.createHandler(properties);
-//        this.createAction.createHandler(getBaseName(), (String) fileType.getSelectedItem(), moduleName.getText());
+
+        this.createAction.createAngularComponentsHandler(getBaseName(), (String) fileType.getSelectedItem(), (String) moduleName.getSelectedItem());
+
         dispose();
     }
 
@@ -124,7 +129,7 @@ public class CreateFile extends JDialog {
 
     public void showDialog() {
         warningLabel.setVisible(false);
-        warningtext.setVisible(false);
+        warningText.setVisible(false);
 
         this.objectName.grabFocus();
         this.pack();
@@ -144,20 +149,18 @@ public class CreateFile extends JDialog {
                 moduleName.setPopupVisible(false);
                 isModuleNameAvailable = false;
                 setOkButtonState();
-            }
-            else{
+            } else {
                 isModuleNameAvailable = true;
                 setOkButtonState();
             }
 
             if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
                 moduleName.setPopupVisible(false);
-            }
-            else if (String.valueOf(e.getKeyChar()).matches("\\w+")) {
+            } else if (String.valueOf(e.getKeyChar()).matches("\\w+")) {
                 moduleName.hidePopup();
                 String input = editor.getText();
-//                System.out.println(input);
-                List<String> matchingItems = new ArrayList<String>();
+
+                List<String> matchingItems = new ArrayList<>();
                 for (String item : allItems) {
                     if (item.toLowerCase().startsWith(input)) {
                         matchingItems.add(item);
@@ -171,7 +174,7 @@ public class CreateFile extends JDialog {
                     }
                     moduleName.setSelectedItem(moduleName.getItemAt(0));
                     editor.setText(input
-                            + ((String)moduleName.getItemAt(0))
+                            + ((String) moduleName.getItemAt(0))
                             .substring(input.length()));
                     editor.setCaretPosition(input.length());
                     editor.setSelectionStart(input.length());
@@ -191,7 +194,7 @@ public class CreateFile extends JDialog {
         }
     }
 
-    private void setOkButtonState(){
+    private void setOkButtonState() {
         buttonOK.setEnabled(isModuleNameAvailable && isFileNameAvailable);
     }
 }
