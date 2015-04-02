@@ -8,9 +8,6 @@ This plugin helps to:
 2. Bootstrap jasmine unit tests right next to source file
 3. Bootstrap ngdoc documentation for the components
     
-<h4>Github:</h4>
-<p>For any bugs or feature requests, go to the <a href="https://github.com/suparngp/angular-iunit">GitHub repo</a>.</p>
-
 How to install
 --------
 

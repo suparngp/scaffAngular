@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>org.weebly.generator</id>
     <name>ScaffAngular</name>
-    <version>2.0.0</version>
+    <version>2.0.1</version>
     <vendor email="weeblysup@gmail.com">Weebly</vendor>
 
     <description>
@@ -17,7 +17,7 @@
             </p>
 
             <h4>Github:</h4>
-            <p>For any bugs or feature requests, go to the <a href="https://github.com/suparngp/angular-iunit">GitHub repo</a>.</p>
+            <p>For any bugs or feature requests, go to the <a href="https://github.com/suparngp/scaffAngular">https://github.com/suparngp/scaffAngular</a>.</p>
         ]]>
     </description>
 
