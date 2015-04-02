@@ -7,7 +7,6 @@ import javax.swing.text.JTextComponent;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 public class CreateFile extends JDialog {
@@ -39,6 +38,13 @@ public class CreateFile extends JDialog {
         }
 
         allItems = this.createAction.getModuleNameSuggestions();
+        if (allItems.size() > 0) {
+            moduleName.removeAllItems();
+            for (String item : allItems) {
+                moduleName.addItem(item);
+            }
+            isModuleNameAvailable = true;
+        }
 
         setOkButtonState();
         setContentPane(contentPane);
@@ -108,6 +114,7 @@ public class CreateFile extends JDialog {
         }
     }
 
+    //region helpers
     private String getBaseName() {
         return objectName.getText().trim();
     }
@@ -116,12 +123,18 @@ public class CreateFile extends JDialog {
         return (String) fileType.getSelectedItem();
     }
 
+    private void setOkButtonState() {
+        buttonOK.setEnabled(isModuleNameAvailable && isFileNameAvailable);
+    }
+
     private void onOK() {
 
         this.createAction.createAngularComponentsHandler(getBaseName(), (String) fileType.getSelectedItem(), (String) moduleName.getSelectedItem());
 
         dispose();
     }
+
+    //endregion
 
     private void onCancel() {
         dispose();
@@ -146,7 +159,6 @@ public class CreateFile extends JDialog {
             super.keyReleased(e);
             JTextComponent editor = ((JTextComponent) moduleName.getEditor().getEditorComponent());
             if (editor.getText().equals("")) {
-                moduleName.setPopupVisible(false);
                 isModuleNameAvailable = false;
                 setOkButtonState();
             } else {
@@ -166,6 +178,7 @@ public class CreateFile extends JDialog {
                         matchingItems.add(item);
                     }
                 }
+
                 if (!matchingItems.isEmpty()) {
                     moduleName.removeAllItems();
                     Collections.sort(matchingItems);
@@ -180,7 +193,6 @@ public class CreateFile extends JDialog {
                     editor.setSelectionStart(input.length());
                     editor.setSelectionEnd(moduleName.getSelectedItem().toString().length());
                 }
-
                 //if nothing matching display complete list
                 else {
                     moduleName.removeAllItems();
@@ -194,7 +206,5 @@ public class CreateFile extends JDialog {
         }
     }
 
-    private void setOkButtonState() {
-        buttonOK.setEnabled(isModuleNameAvailable && isFileNameAvailable);
-    }
+
 }
