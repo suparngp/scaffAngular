@@ -10,15 +10,23 @@ import java.util.HashMap;
  */
 public class TemplateLoader {
 
-    private static String templatePath = "/templates/";
+    private String templatePath = "/templates/";
     private String[] componentTypes = {"Controller", "Directive", "Service", "Factory", "Filter"};
 
     private HashMap<String, Component> Components = new HashMap<>();
 
-    public boolean isLoaded = false;
+    private boolean isLoaded = false;
 
-    public TemplateLoader() {
-        initComponent();
+    /**
+     * Lazy loads and gets the map of initialized Components
+     *
+     * @return map
+     */
+    public HashMap<String, Component> getComponents() {
+        if(!isLoaded) {
+            initComponent();
+        }
+        return Components;
     }
 
     public final void initComponent() {
@@ -36,13 +44,5 @@ public class TemplateLoader {
         isLoaded = true;
     }
 
-    /**
-     * Gets the map of initialized Components
-     *
-     * @return map
-     */
-    public HashMap<String, Component> getComponents() {
-        return Components;
-    }
     public String[] getComponentTypes() {return componentTypes;}
 }
