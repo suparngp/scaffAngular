@@ -1,6 +1,6 @@
 /**
  * @ngdoc service
- * @name #COMPONENTNAME#
+ * @name #MODULENAME#:#COMPONENTNAME#
  * @description
  * _Please update the description and dependencies._
  *

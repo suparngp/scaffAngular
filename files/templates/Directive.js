@@ -1,6 +1,6 @@
 /**
  * @ngdoc directive
- * @name #COMPONENTNAME#
+ * @name #MODULENAME#:#COMPONENTNAME#
  *
  * @description
  * _Please update the description and restriction._
