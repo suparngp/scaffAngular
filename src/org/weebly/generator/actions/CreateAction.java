@@ -27,7 +27,6 @@ public class CreateAction extends AnAction {
     private static TemplateLoader templateLoader;
     private static ConfigurationLoader configurationLoader;
 
-
     private static String currentPath = "";
     private static AnActionEvent e;
 
@@ -53,7 +52,7 @@ public class CreateAction extends AnAction {
         currentPath = data.getPath();
         project = e.getData(PlatformDataKeys.PROJECT);
 
-        new CreateFile(this, templateLoader.getComponentTypes()).showDialog();
+        new CreateFile(this, templateLoader).showDialog();
     }
 
     @Override
@@ -77,8 +76,8 @@ public class CreateAction extends AnAction {
     public void createAngularComponentsHandler(String componentName, String componentType, String moduleName) {
 
         try {
-            String codeFileName = getSrcFilename(componentName, componentType);
-            String specFileName = getTestFilename(componentName, componentType);
+            String codeFileName = templateLoader.getSrcFilename(componentName, componentType);
+            String specFileName = templateLoader.getTestFilename(componentName, componentType);
 
             File codeFile = FileHandler.createFile(codeFileName, currentPath);
             File specFile = FileHandler.createFile(specFileName, currentPath);
@@ -93,8 +92,8 @@ public class CreateAction extends AnAction {
 
                 Component tmp = templateLoader.getComponents().get(componentType);
 
-                FileHandler.writeFileContent(codeFile, formatContent(tmp.code, componentName, moduleName));
-                FileHandler.writeFileContent(specFile, formatContent(tmp.spec, componentName, moduleName));
+                FileHandler.writeFileContent(codeFile, templateLoader.formatContent(tmp.code, componentName, moduleName));
+                FileHandler.writeFileContent(specFile, templateLoader.formatContent(tmp.spec, componentName, moduleName));
 
                 //open the file after writing content to it.
                 fileByIoFile.refresh(false, true);
@@ -117,9 +116,7 @@ public class CreateAction extends AnAction {
         }
     }
 
-    private String formatContent(String content, String componentName, String moduleName) {
-        return content.replaceAll("#COMPONENTNAME#", componentName).replaceAll("#MODULENAME#", moduleName);
-    }
+
 
     private void persistModuleName(String moduleName, String codeFileName, String specFileName) {
         Configuration state = configurationLoader.getState();
@@ -142,28 +139,7 @@ public class CreateAction extends AnAction {
         Commons.openFileInEditor(project, currentPath + "/" + filename);
     }
 
-    /**
-     * Gets the file name with the required type based on if its a controller or a directive or a service
-     *
-     * @param fileName the filename
-     * @param type     the type of the file
-     * @return the file name with file type
-     */
-    private String getFilenameWithSuffix(String fileName, String type) {
-        if (type != null && type.equals("Controller")) {
-            return fileName + "Ctrl";
-        } else {
-            return fileName + type;
-        }
-    }
 
-    public String getSrcFilename(String baseName, String fileType) {
-        return getFilenameWithSuffix(baseName, fileType) + ".js";
-    }
-
-    public String getTestFilename(String baseName, String fileType) {
-        return getFilenameWithSuffix(baseName, fileType) + "Spec.js";
-    }
 
     /**
      * Displays the error dialog

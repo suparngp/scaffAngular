@@ -44,5 +44,32 @@ public class TemplateLoader {
         isLoaded = true;
     }
 
+    /**
+     * Gets the file name with the required type based on if its a controller or a directive or a service
+     *
+     * @param fileName the filename
+     * @param type     the type of the file
+     * @return the file name with file type
+     */
+    public String getFilenameWithSuffix(String fileName, String type) {
+        if (type.equals("Controller")) {
+            return fileName + "Ctrl";
+        } else {
+            return fileName + type;
+        }
+    }
+
+    public String getSrcFilename(String baseName, String fileType) {
+        return getFilenameWithSuffix(baseName, fileType) + ".js";
+    }
+
+    public String getTestFilename(String baseName, String fileType) {
+        return getFilenameWithSuffix(baseName, fileType) + "Spec.js";
+    }
+
+    public String formatContent(String content, String componentName, String moduleName) {
+        return content.replaceAll("#COMPONENTNAME#", componentName).replaceAll("#MODULENAME#", moduleName);
+    }
+
     public String[] getComponentTypes() {return componentTypes;}
 }

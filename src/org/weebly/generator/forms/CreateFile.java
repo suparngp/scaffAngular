@@ -1,6 +1,7 @@
 package org.weebly.generator.forms;
 
 import org.weebly.generator.actions.CreateAction;
+import org.weebly.generator.services.TemplateLoader;
 
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
@@ -10,30 +11,33 @@ import java.util.Collections;
 import java.util.List;
 
 public class CreateFile extends JDialog {
+    private JComboBox fileType;
+    private JTextField objectName;
+    private JComboBox moduleName;
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
     private JTextField mainFileName;
     private JTextField testFileName;
-    private JComboBox fileType;
-    private JComboBox moduleName;
     private JLabel warningLabel;
     private JLabel warningText;
-    private JTextField objectName;
-    private CreateAction createAction;
     private List<String> allItems;
 
-    private boolean isModuleNameAvailable = false;
-    private boolean isFileNameAvailable = false;
+    private CreateAction createAction;
+    private TemplateLoader templateLoader;
 
-    public CreateFile(CreateAction createAction, String[] componentTypes) {
+    private boolean isFileNameAvailable = false;
+    private boolean isModuleNameAvailable = false;
+
+    public CreateFile(CreateAction createAction, TemplateLoader templateLoader) {
         super();
 
         this.createAction = createAction;
+        this.templateLoader = templateLoader;
 
         //add types
         fileType.removeAllItems();
-        for (String item : componentTypes) {
+        for (String item : templateLoader.getComponentTypes()) {
             fileType.addItem(item);
         }
 
@@ -95,8 +99,8 @@ public class CreateFile extends JDialog {
     }
 
     private void refresh() {
-        mainFileName.setText(createAction.getSrcFilename(getBaseName(), getObjectType()));
-        testFileName.setText(createAction.getTestFilename(getBaseName(), getObjectType()));
+        mainFileName.setText(templateLoader.getSrcFilename(getBaseName(), getObjectType()));
+        testFileName.setText(templateLoader.getTestFilename(getBaseName(), getObjectType()));
 
         boolean exists = createAction.checkIfFileExists(mainFileName.getText()) && createAction.checkIfFileExists(testFileName.getText());
 
