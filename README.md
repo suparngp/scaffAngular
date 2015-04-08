@@ -7,6 +7,11 @@ This plugin helps to:
 1. Standardize naming convention of angular components across the application
 2. Bootstrap jasmine unit tests right next to source file
 3. Bootstrap ngdoc documentation for the components
+
+Prerequisite
+--------
+scaffAngular is now build with java 7, please update JRE your IDE is running to 7 or 8.
+You can check which JRE is currently used in Help -> About
     
 How to install
 --------
