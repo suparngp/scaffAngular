@@ -10,7 +10,7 @@ This plugin helps to:
 
 Prerequisite
 --------
-scaffAngular is now build with java 7, please update JRE your IDE is running to 7 or 8.
+ScaffAngular is now build with Java 7, please update JRE your IDE is running to 7+.
 You can check which JRE is currently used in Help -> About
     
 How to install

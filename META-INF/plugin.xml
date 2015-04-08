@@ -16,6 +16,8 @@
                 </ol>
             </p>
 
+            <p>ScaffAngular is now build with Java 7, please update JRE your IDE is running to 7+. You can check which JRE is currently used in Help -> About</p>
+
             <p>For any bugs or feature requests go to <a href="https://github.com/suparngp/scaffAngular">github</a>.</p>
         ]]>
     </description>
