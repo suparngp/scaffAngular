@@ -6,7 +6,7 @@ describe('Directive: #MODULENAME#.#COMPONENTNAME#', function () {
         scope = $rootScope.$new();
 
         //update the line below!
-        ele = angular.element('<Replace with directive>');
+        ele = angular.element('<div #COMPONENTNAME# ></div>');
         //update the above line if you haven't!
         $compile(ele)(scope);
         scope.$apply();
