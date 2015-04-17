@@ -7,8 +7,8 @@ describe('Filter: #MODULENAME#.#COMPONENTNAME#', function () {
     var filter;
 
     //update the injection
-    beforeEach(inject(function (_#COMPONENTNAME#_) {
-        filter = _#COMPONENTNAME#_;
+    beforeEach(inject(function ($filter) {
+        filter = $filter('#COMPONENTNAME#');
     }));
 
     /**
