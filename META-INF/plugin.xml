@@ -16,7 +16,7 @@
                 </ol>
             </p>
 
-            <p>ScaffAngular is now build with Java 7, please update JRE your IDE is running to 7+. You can check which JRE is currently used in Help -> About</p>
+            <p><super>Important</super> ScaffAngular is now build with Java 7, please update JRE your IDE is running to 7+. You can check which JRE is currently used in Help -> About</p>
 
             <p>For any bugs or feature requests go to <a href="https://github.com/suparngp/scaffAngular">github</a>.</p>
         ]]>
@@ -24,6 +24,11 @@
 
     <change-notes>
         <![CDATA[
+            <h3>4/17/2015</h3>
+            <ol>
+                <li>fixed filter unit test stub</li>
+            </ol>
+
             <h3>4/1/2015</h3>
             <ol>
                 <li>More components (factory, filter)</li>
