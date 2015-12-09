@@ -2,7 +2,6 @@ package org.weebly.generator.services;
 
 import org.weebly.generator.model.Component;
 
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
 /**
@@ -10,12 +9,12 @@ import java.util.HashMap;
  */
 public class TemplateLoader {
 
-    private String templatePath = "/templates/";
     private String[] componentTypes = {"Controller", "Directive", "Service", "Factory", "Filter"};
 
+    private boolean isLoaded = false;
     private HashMap<String, Component> Components = new HashMap<>();
 
-    private boolean isLoaded = false;
+    public String[] getComponentTypes() {return componentTypes;}
 
     /**
      * Lazy loads and gets the map of initialized Components
@@ -29,7 +28,8 @@ public class TemplateLoader {
         return Components;
     }
 
-    public final void initComponent() {
+    private void initComponent() {
+        String templatePath = "/templates/";
         try {
             for (String obj : componentTypes) {
                 Component tmp = new Component();
@@ -44,32 +44,5 @@ public class TemplateLoader {
         isLoaded = true;
     }
 
-    /**
-     * Gets the file name with the required type based on if its a controller or a directive or a service
-     *
-     * @param fileName the filename
-     * @param type     the type of the file
-     * @return the file name with file type
-     */
-    public String getFilenameWithSuffix(String fileName, String type) {
-        if (type.equals("Controller")) {
-            return fileName + "Ctrl";
-        } else {
-            return fileName + type;
-        }
-    }
 
-    public String getSrcFilename(String baseName, String fileType) {
-        return getFilenameWithSuffix(baseName, fileType) + ".js";
-    }
-
-    public String getTestFilename(String baseName, String fileType) {
-        return getFilenameWithSuffix(baseName, fileType) + "Spec.js";
-    }
-
-    public String formatContent(String content, String componentName, String moduleName) {
-        return content.replaceAll("#COMPONENTNAME#", componentName).replaceAll("#MODULENAME#", moduleName);
-    }
-
-    public String[] getComponentTypes() {return componentTypes;}
 }

@@ -5,13 +5,17 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.components.StoragePathMacros;
 import org.jetbrains.annotations.Nullable;
+import org.weebly.generator.model.Configuration;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Loads the plugin configuration
- * Created by suparngupta on 7/10/14.
  */
-@State(name = "Configuration", reloadable = true, storages = {
-        @Storage(id = "other", file = StoragePathMacros.APP_CONFIG + "/other.xml")
+
+@State(name = "scaffangular", reloadable = true, storages = {
+        @Storage(id = "other", file = StoragePathMacros.APP_CONFIG + "/scaffangular.xml")
 })
 public class ConfigurationLoader implements PersistentStateComponent<Configuration> {
     private Configuration configuration;
@@ -19,15 +23,37 @@ public class ConfigurationLoader implements PersistentStateComponent<Configurati
     @Nullable
     @Override
     public Configuration getState() {
+        if(configuration == null){
+            this.loadState(new Configuration());
+        }
         return configuration;
     }
 
     @Override
-    public void loadState(Configuration _configuration) {
-        if (_configuration == null) {
-            configuration = new Configuration();
+    public void loadState(Configuration configuration) {
+        if (configuration != null) {
+            this.configuration = configuration;
         } else {
-            configuration = _configuration;
+            this.configuration = new Configuration();
+        }
+    }
+
+    /**
+     * Returns the suggestions for the module names
+     *
+     * @return the list of module names used so far
+     */
+    public List<String> getModuleNameSuggestions() {
+        return this.getState().getModuleNameSuggestions();
+    }
+
+    public void persistModuleName(String moduleName) {
+        //save module name suggestion
+        if (this.configuration.getModuleNameSuggestions() == null) {
+            this.configuration.setModuleNameSuggestions(new ArrayList<String>());
+        }
+        if (!this.configuration.getModuleNameSuggestions().contains(moduleName)) {
+            this.configuration.getModuleNameSuggestions().add(moduleName);
         }
     }
 }

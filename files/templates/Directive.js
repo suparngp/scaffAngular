@@ -3,7 +3,7 @@
  * @name #MODULENAME#:#COMPONENTNAME#
  *
  * @description
- * _Please update the description and restriction._
+ *
  *
  * @restrict A
  * */

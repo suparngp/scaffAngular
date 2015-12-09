@@ -8,7 +8,6 @@ import java.io.*;
 
 /**
  * Contains APIs to handle the templates
- * Created by IronMan on 7/8/14.
  */
 
 public class FileHandler {
