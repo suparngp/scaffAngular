@@ -1,4 +1,4 @@
-package org.weebly.generator.forms;
+package org.weebly.generator.actions.dialogs;
 
 import javax.swing.*;
 import java.awt.event.*;

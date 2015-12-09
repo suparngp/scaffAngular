@@ -4,19 +4,19 @@ package org.weebly.generator.model.exceptions;
  * Defines the generic exception used by the Angular IUnit Module
  * Created by IronMan on 7/8/14.
  */
-public class AngularIUnitException extends Exception {
+public class BaseException extends Exception {
 
     private String name;
     private String description;
     private ExceptionCode code;
 
     /**
-     * Creates a AngularIUnitException instance
+     * Creates a BaseException instance
      * @param name the name of the exception
      * @param description the description of the exception
      * @param code the templates.code associated with the exception
      */
-    public AngularIUnitException(String name, String description, ExceptionCode code){
+    public BaseException(String name, String description, ExceptionCode code){
         this.name = name;
         this.description = description;
         this.code = code;

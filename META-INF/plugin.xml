@@ -24,6 +24,11 @@
 
     <change-notes>
         <![CDATA[
+            <h3>12/08/2015</h3>
+            <ol>
+                <li>fixed file naming issues</li>
+            </ol>
+
             <h3>4/17/2015</h3>
             <ol>
                 <li>fixed filter unit test stub</li>
@@ -54,6 +59,8 @@
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
         <applicationService serviceImplementation="org.weebly.generator.services.ConfigurationLoader"/>
+        <applicationService serviceImplementation="org.weebly.generator.services.ContentBuilder"/>
+        <applicationService serviceImplementation="org.weebly.generator.services.FileHandler"/>
         <applicationService serviceImplementation="org.weebly.generator.services.TemplateLoader"/>
     </extensions>
 
@@ -68,7 +75,7 @@
     <actions>
         <!-- Add your actions here -->
         <action id="angularComponent" class="org.weebly.generator.actions.CreateAction" text="Angular Component"
-                description="Generate a component for angular" icon="/icons/action.png">
+                description="Generate angular component" icon="/icons/action.png">
             <add-to-group group-id="NewGroup" anchor="first"/>
         </action>
     </actions>

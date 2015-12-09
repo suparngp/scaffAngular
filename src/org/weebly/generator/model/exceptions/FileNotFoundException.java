@@ -4,7 +4,7 @@ package org.weebly.generator.model.exceptions;
  * Exception used when the file is not found during a RUD operations
  * Created by IronMan on 7/8/14.
  */
-public class FileNotFoundException extends AngularIUnitException{
+public class FileNotFoundException extends BaseException {
 
     /**
      * Creates an instance of FileNotFoundException
