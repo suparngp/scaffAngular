@@ -5,9 +5,9 @@ describe('Directive: #MODULENAME#.#COMPONENTNAME#', function () {
     beforeEach(inject(function ($compile, $rootScope) {
         scope = $rootScope.$new();
 
-        //update the line below!
+        //update to match directive your testing
         ele = angular.element('<div #COMPONENTNAME#></div>');
-        //update the above line if you haven't!
+
         $compile(ele)(scope);
         scope.$apply();
     }));
@@ -18,7 +18,6 @@ describe('Directive: #MODULENAME#.#COMPONENTNAME#', function () {
      * */
     it('should not render empty html', function () {
         scope.$apply(function () {
-
             /**
              * Set the scope properties here.
              * scope.desc = 'test hostname';

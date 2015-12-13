@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>org.weebly.generator</id>
     <name>ScaffAngular</name>
-    <version>2.0.2</version>
+    <version>2.1.1</version>
     <vendor email="weeblysup@gmail.com">Weebly</vendor>
 
     <description>
@@ -9,11 +9,11 @@
             Scaffold Angular JS Components and respective unit tests.
 
             <p>This plugin helps to:
-                <ol>
+                <ul>
                     <li>Standardize naming convention of angular components across the application</li>
                     <li>Bootstrap jasmine unit tests right next to source file</li>
                     <li>Bootstrap ngdoc documentation for the components</li>
-                </ol>
+                </ul>
             </p>
 
             <p><super>Important</super> ScaffAngular is now build with Java 7, please update JRE your IDE is running to 7+. You can check which JRE is currently used in Help -> About</p>
@@ -24,26 +24,37 @@
 
     <change-notes>
         <![CDATA[
-            <h3>12/08/2015</h3>
-            <ol>
+            <section>
+            <h3>12/11/2015 - 2.1.1</h3>
+            <ul>
+                <li>fixed missig underscores around component name in factory and service unit test templates</li>
+            </ul>
+            </section>
+            <section>
+            <h3>12/08/2015 - 2.1.0</h3>
+            <ul>
                 <li>fixed file naming issues</li>
-            </ol>
-
+            </ul>
+            </section>
+            <section>
             <h3>4/17/2015</h3>
-            <ol>
+            <ul>
                 <li>fixed filter unit test stub</li>
-            </ol>
-
+            </ul>
+            </section>
+            <section>
             <h3>4/1/2015</h3>
-            <ol>
+            <ul>
                 <li>More components (factory, filter)</li>
                 <li>Improved ngdoc</li>
-            </ol>
-
+            </ul>
+            </section>
+            <section>
             <h3>7/22/2014</h3>
-            <ol>
+            <ul>
                 <li>Bug Fixes. Mainly around directives.</li>
-            </ol>
+            </ul>
+            </section>
         ]]>
     </change-notes>
 
