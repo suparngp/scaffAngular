@@ -13,9 +13,6 @@ public class ContentBuilder {
 
     /**
      * Handles the callback from the UI to create the component
-     *  @param componentType type of component
-     * @param moduleName    name of module
-     * @param componentBasename name of component
      */
     public ArrayList<String> createAngularComponentsHandler(String currentPath, String componentType, String moduleName, String componentBasename) throws DirectoryNotFoundException, DuplicateFileException, IOException {
 

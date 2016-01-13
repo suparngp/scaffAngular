@@ -8,7 +8,7 @@ describe('Service: #MODULENAME#.#COMPONENTNAME#', function () {
 
     //update the injection
     beforeEach(inject(function (_#COMPONENTNAME#_) {
-        service = _#COMPONENTNAME_#;
+        service = _#COMPONENTNAME#_;
     }));
 
     /**
